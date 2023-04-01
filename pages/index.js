@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import Balance from "../components/balance";
 import { Stack } from "@mui/system";
 import ExpenseCard from "../components/expenseCard";
+import ExpenseEditCard from "../components/expenseEditCard";
+import { Typography } from "@mui/material";
 
 export default function Home() {
   const [balance, setBalance] = useState(0);
@@ -47,6 +49,10 @@ export default function Home() {
           <Balance balance={balance} />
           <h3>/=</h3>
         </Stack>
+        <ExpenseEditCard />
+        <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
+          List of latest expenses
+        </Typography>
         {expenseList?.map((expense, i)=>{
           return <ExpenseCard key={i} title={expense.expense_title} type={expense.expense_type}  details={expense.expense_details} attention={expense.expense} created={expense.created_date} />
         })}
