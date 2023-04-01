@@ -1,19 +1,31 @@
-import Head from 'next/head';
-import Layout, { siteTitle } from '../components/layout';
-import utilStyles from '../styles/utils.module.css';
+import Head from "next/head";
+import Layout, { siteTitle } from "../components/layout";
+import utilStyles from "../styles/utils.module.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get("/api/get")
+      .then((response) => {
+        setBalance(response.data.rows[0]["current_balance"]);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [setBalance]);
+
   return (
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <p>Current Balance: </p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{' '}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
+        <p>Current Balance: {balance}</p>
+        <button onClick={()=>{setBalance(balance+8);}}>Click</button>
       </section>
     </Layout>
   );
