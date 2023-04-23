@@ -7,26 +7,21 @@ import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
 
 export default function ExpenseEditCard(props) {
   const [alignment, setAlignment] = useState("remove");
   const [title, setTitle] = useState("");
   const [expense, setExpense] = useState("");
   const [details, setDetails] = useState("");
-  const { push } = useRouter();
 
   const expenseInsertCall = (data) => {
     axios
       .post("/api/insertexpense", data)
       .then(async (response) => {
-        //setAlignment("");
         setExpense("");
         setTitle("");
         setDetails("");
         await props.getExpenselist(false);
-        //push("/");
-        //window.location.reload(true);
       })
       .catch((e) => {
         console.log(e);
