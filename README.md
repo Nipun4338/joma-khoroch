@@ -1,1 +1,1 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+This is a demo Nextjs, Postgresql project for me to maintain daily debit credit history and insights.
