@@ -14,10 +14,13 @@ export default function Home() {
   const [balance, setBalance] = useState(0);
   const [initialBalance, setInitialBalance] = useState(0);
   const [expenseList, setExpenseList] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loadingBalance, setLoadingBalance] = useState(true);
+  const [loadingList, setLoadingList] = useState(true);
+  const [showInputBalance, setShowInputBalance] = useState(false);
 
   const getExpenselist = async (loading) => {
-    setLoading(loading);
+    setLoadingBalance(loadingBalance);
+    setLoadingList(loadingList);
     await setExpenseList([]);
     let response = await axios.get("/api/getexpenselist");
     let response2 = await axios.get("/api/getbalance");
@@ -26,15 +29,19 @@ export default function Home() {
     const bl = response2.data.rows[0]["current_balance"];
     setInitialBalance(bl);
     setBalance(newBalance + bl);
-    await setLoading(false);
+    await setLoadingBalance(false);
+    await setLoadingList(false);
   };
 
-  // const getAgainExpense = async()=>{
-  //   setLoading(true);
-  //   let response = await axios.get("/api/getexpenselist");
-  //   await setExpenseList([...expenseList, response.data.rows]);
-  //   await setLoading(false);
-  // }
+  const reloadBalance = async (loading) => {
+    setLoadingBalance(loading);
+    let response2 = await axios.get("/api/getbalance");
+    const newBalance = initializeBalance(expenseList);
+    const bl = response2.data.rows[0]["current_balance"];
+    setInitialBalance(bl);
+    setBalance(newBalance + bl);
+    await setLoadingBalance(false);
+  };
 
   useEffect(() => {
     getExpenselist(true);
@@ -52,7 +59,7 @@ export default function Home() {
   const ReloadExpenseList = () => {
     return (
       <>
-        {loading ? (
+        {loadingList ? (
           <CircularProgress />
         ) : !expenseList ? (
           <p>No List to show</p>
@@ -92,7 +99,18 @@ export default function Home() {
           <Typography variant="h5" component="div">
             ৳.
           </Typography>
-          {loading ? <CircularProgress /> : <Balance balance={balance} />}
+          {loadingBalance ? (
+            <CircularProgress />
+          ) : (
+            <Balance
+              balance={balance}
+              showInputBalance={showInputBalance}
+              handleDoubleClick={() => setShowInputBalance(true)}
+              setshowInputBalance={showInputBalance}
+              handleBlur={() => setShowInputBalance(false)}
+              reloadBalance={reloadBalance}
+            />
+          )}
         </Stack>
         <ExpenseEditCard getExpenselist={getExpenselist} />
         <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
