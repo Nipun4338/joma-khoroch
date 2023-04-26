@@ -23,9 +23,7 @@ export default function ExpenseEditCard(props) {
         setDetails("");
         await props.getExpenselist(false);
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => {});
   };
 
   const expenseInsert = () => {

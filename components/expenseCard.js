@@ -39,9 +39,7 @@ export default function ExpenseCard(props) {
         //push("/");
         //window.location.reload(true);
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => {});
   };
 
   return (
