@@ -1,4 +1,4 @@
-import { Input, TextField, useMediaQuery } from "@mui/material";
+import { TextField, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
@@ -14,18 +14,14 @@ export default function Balance(props) {
     matches ? setShowInputBalance(true) : null;
   };
 
-  const balanceUpdate = () => {
+  const balanceUpdate = async () => {
     let data = {
       balance: balance,
     };
-    axios
+    await axios
       .post("/api/updatebalance", data)
-      .then(async (response) => {
-        await props.getExpenselist(false);
-      })
-      .catch((e) => {
-        //console.log(e);
-      });
+      .then(async (response) => {})
+      .catch((e) => {});
   };
 
   const handleChange = (data) => {
@@ -35,7 +31,7 @@ export default function Balance(props) {
   const onBlur = async () => {
     props.handleBlur();
     await balanceUpdate();
-    await setShowInputBalance(false);
+    setShowInputBalance(false);
     await props.reloadBalance(true);
   };
 

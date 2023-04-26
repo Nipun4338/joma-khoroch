@@ -9,6 +9,7 @@ import { Stack } from "@mui/system";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
 import { CircularProgress, Typography } from "@mui/material";
+import Link from "next/link";
 
 export default function Home() {
   const [balance, setBalance] = useState(0);
@@ -16,31 +17,20 @@ export default function Home() {
   const [expenseList, setExpenseList] = useState();
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingList, setLoadingList] = useState(true);
-  const [showInputBalance, setShowInputBalance] = useState(false);
 
   const getExpenselist = async (loading) => {
     setLoadingBalance(loadingBalance);
     setLoadingList(loadingList);
-    await setExpenseList([]);
+    setExpenseList([]);
     let response = await axios.get("/api/getexpenselist");
     let response2 = await axios.get("/api/getbalance");
-    await setExpenseList(response.data.rows);
+    setExpenseList(response.data.rows);
     const newBalance = initializeBalance(response.data.rows);
     const bl = response2.data.rows[0]["current_balance"];
     setInitialBalance(bl);
     setBalance(newBalance + bl);
-    await setLoadingBalance(false);
-    await setLoadingList(false);
-  };
-
-  const reloadBalance = async (loading) => {
-    setLoadingBalance(loading);
-    let response2 = await axios.get("/api/getbalance");
-    const newBalance = initializeBalance(expenseList);
-    const bl = response2.data.rows[0]["current_balance"];
-    setInitialBalance(bl);
-    setBalance(newBalance + bl);
-    await setLoadingBalance(false);
+    setLoadingBalance(false);
+    setLoadingList(false);
   };
 
   useEffect(() => {
@@ -52,7 +42,6 @@ export default function Home() {
     expenseList.map((expense) => {
       newBalance = newBalance + expense.expense;
     });
-    console.log(expenseList);
     return newBalance;
   };
 
@@ -102,14 +91,21 @@ export default function Home() {
           {loadingBalance ? (
             <CircularProgress />
           ) : (
-            <Balance
-              balance={balance}
-              showInputBalance={showInputBalance}
-              handleDoubleClick={() => setShowInputBalance(true)}
-              setshowInputBalance={showInputBalance}
-              handleBlur={() => setShowInputBalance(false)}
-              reloadBalance={reloadBalance}
-            />
+            <>
+              {balance > 1000 ? (
+                <div className="row">
+                  <Link href="/insights">
+                    <h1 style={{ color: "green" }}>{balance}</h1>
+                  </Link>
+                </div>
+              ) : (
+                <div className="row">
+                  <Link href="/insights">
+                    <h1 style={{ color: "red" }}>{balance}</h1>
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </Stack>
         <ExpenseEditCard getExpenselist={getExpenselist} />
