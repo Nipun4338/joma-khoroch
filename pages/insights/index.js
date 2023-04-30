@@ -8,6 +8,7 @@ import DailyLimit from "../../components/dailyLimit";
 import { CircularProgress, Stack, Typography } from "@mui/material";
 import MonthlyExpenseTarget from "../../components/monthlyExpenseTarget";
 import Balance from "../../components/balance";
+import PredictDailyLimit from "../../components/predictDailyLimit";
 
 export default function Insights() {
   const [balance, setBalance] = useState(0);
@@ -79,9 +80,22 @@ export default function Insights() {
     return newBalance;
   };
 
+  const ShowPredictedDailyLimit = () =>{
+    return (
+        <PredictDailyLimit
+            expenseList={expenseList}
+            monthlyExpenseTarget={monthlyExpenseTarget}
+          />
+    );
+  };
+
   useEffect(() => {
     getExpenselist();
   }, []);
+
+  useEffect(() => {
+    ShowPredictedDailyLimit();
+  }, [monthlyExpenseTarget]);
 
   return (
     <>
@@ -89,74 +103,81 @@ export default function Insights() {
         <Head>
           <title>Joma Khoroch - Insights</title>
         </Head>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
-        >
-          <h6>Current Balance: </h6>
-          <Typography variant="h5" component="div">
-            ৳.
-          </Typography>
-          {loadingBalance ? (
-            <CircularProgress />
-          ) : (
-            <Balance
-              balance={balance}
-              showInputBalance={showInputBalance}
-              handleDoubleClick={() => setShowInputBalance(true)}
-              setshowInputBalance={showInputBalance}
-              handleBlur={() => setShowInputBalance(false)}
-              reloadBalance={reloadBalance}
-            />
-          )}
-        </Stack>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
-        >
-          <h6>Daily Limit: </h6>
-          <Typography variant="h5" component="div">
-            ৳.
-          </Typography>
-          {loadingDailyLimit ? (
-            <CircularProgress />
-          ) : (
-            <DailyLimit
-              dailyLimit={dailyLimit}
-              showInputDailyLimit={showInputDailyLimit}
-              handleDoubleClick={() => setShowInputDailyLimit(true)}
-              setShowInputDailyLimit={showInputDailyLimit}
-              handleBlur={() => setShowInputDailyLimit(false)}
-              reloadDailyLimit={reloadDailyLimit}
-            />
-          )}
-        </Stack>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
-        >
-          <h6>Monthly Expense Target: </h6>
-          <Typography variant="h5" component="div">
-            ৳.
-          </Typography>
-          {loadingMonthlyExpenseTarget ? (
-            <CircularProgress />
-          ) : (
-            <MonthlyExpenseTarget
-              monthlyExpenseTarget={monthlyExpenseTarget}
-              showInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
-              handleDoubleClick={() => setShowInputMonthlyExpenseTarget(true)}
-              setshowInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
-              handleBlur={() => setShowInputMonthlyExpenseTarget(false)}
-              reloadMonthlyExpenseTarget={reloadMonthlyExpenseTarget}
-            />
-          )}
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <ShowPredictedDailyLimit />
+        )}
+        <Stack border={5} borderColor="violet" borderRadius={10}>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <h6>Current Balance: </h6>
+            <Typography variant="h5" component="div">
+              ৳.
+            </Typography>
+            {loadingBalance ? (
+              <CircularProgress />
+            ) : (
+              <Balance
+                balance={balance}
+                showInputBalance={showInputBalance}
+                handleDoubleClick={() => setShowInputBalance(true)}
+                setshowInputBalance={showInputBalance}
+                handleBlur={() => setShowInputBalance(false)}
+                reloadBalance={reloadBalance}
+              />
+            )}
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <h6>Daily Limit: </h6>
+            <Typography variant="h5" component="div">
+              ৳.
+            </Typography>
+            {loadingDailyLimit ? (
+              <CircularProgress />
+            ) : (
+              <DailyLimit
+                dailyLimit={dailyLimit}
+                showInputDailyLimit={showInputDailyLimit}
+                handleDoubleClick={() => setShowInputDailyLimit(true)}
+                setShowInputDailyLimit={showInputDailyLimit}
+                handleBlur={() => setShowInputDailyLimit(false)}
+                reloadDailyLimit={reloadDailyLimit}
+              />
+            )}
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <h6>Monthly Expense Target: </h6>
+            <Typography variant="h5" component="div">
+              ৳.
+            </Typography>
+            {loadingMonthlyExpenseTarget ? (
+              <CircularProgress />
+            ) : (
+              <MonthlyExpenseTarget
+                monthlyExpenseTarget={monthlyExpenseTarget}
+                showInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
+                handleDoubleClick={() => setShowInputMonthlyExpenseTarget(true)}
+                setshowInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
+                handleBlur={() => setShowInputMonthlyExpenseTarget(false)}
+                reloadMonthlyExpenseTarget={reloadMonthlyExpenseTarget}
+              />
+            )}
+          </Stack>
         </Stack>
       </Layout>
     </>
