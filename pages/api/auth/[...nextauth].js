@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { server } from "../../../config";
 export const authOptions = {
   secret: process.env.NextAuth_SECRET,
   // Configure one or more authentication providers
@@ -32,7 +31,7 @@ export const authOptions = {
 
       async authorize(credentials, req) {
         const { email, password } = credentials;
-        const res = await fetch(`${server}/api/login`, {
+        const res = await fetch(`${process.env.server}/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
