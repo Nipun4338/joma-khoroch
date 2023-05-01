@@ -1,15 +1,10 @@
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { server } from "../../../config";
 export const authOptions = {
   secret: process.env.NextAuth_SECRET,
   // Configure one or more authentication providers
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
       name: "Credentials",
@@ -32,7 +27,7 @@ export const authOptions = {
 
       async authorize(credentials, req) {
         const { email, password } = credentials;
-        const res = await fetch(`${server}/api/login`, {
+        const res = await fetch(`https://joma-khoroch.vercel.app/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
