@@ -4,7 +4,6 @@ import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Balance from "../components/balance";
 import { Stack } from "@mui/system";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
