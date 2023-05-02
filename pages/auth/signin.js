@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { getProviders, getSession, signIn } from "next-auth/react";
-import { Button, Input, Typography } from "@mui/material";
+import { Button, Input } from "@mui/material";
 import { Stack } from "@mui/system";
 
 const Signin = ({ providers }) => {
