@@ -11,6 +11,9 @@ export const siteTitle = "Joma Khoroch";
 
 export default function Layout({ children, home }) {
   const { data: session, status } = useSession();
+
+  console.log(status);
+
   if (status === "authenticated") {
     return (
       <div className={styles.container}>
@@ -56,6 +59,7 @@ export default function Layout({ children, home }) {
       </div>
     );
   }
+
   return (
     <div className={styles.container}>
       <Head>
