@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import { Stack } from "@mui/system";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
-import { Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import Link from "next/link";
 import { MagnifyingGlass, ProgressBar } from "react-loader-spinner";
+import ExportAsCSV from "../components/exportAsCSV";
 
 export default function Home() {
   const [balance, setBalance] = useState(0);
@@ -71,13 +72,24 @@ export default function Home() {
           <p>No List to show</p>
         ) : (
           <>
-            <Typography
-              sx={{ fontSize: 18 }}
-              color="text.secondary"
-              gutterBottom
+            <Grid
+              container
+              rowSpacing={1}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
             >
-              List of latest expenses
-            </Typography>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{ fontSize: 18 }}
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  List of latest expenses
+                </Typography>
+              </Grid>
+              <Grid item xs={6} display="flex" alignItems="flex-end" justifyContent="flex-end">
+                <ExportAsCSV expenseList={expenseList}/>
+              </Grid>
+            </Grid>
             {expenseList.map((expense, i) => {
               return (
                 <ExpenseCard
