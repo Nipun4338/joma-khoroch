@@ -5,7 +5,7 @@ import Layout from "../../components/layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DailyLimit from "../../components/dailyLimit";
-import { Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
 import MonthlyExpenseTarget from "../../components/monthlyExpenseTarget";
 import Balance from "../../components/balance";
 import PredictDailyLimit from "../../components/predictDailyLimit";
@@ -126,98 +126,200 @@ export default function Insights() {
         ) : (
           <ShowPredictedDailyLimit />
         )}
-        <Stack border={5} borderColor="violet" borderRadius={10}>
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <h6>Current Balance: </h6>
-            <Typography variant="h5" component="div">
-              ৳.
-            </Typography>
-            {loadingBalance ? (
-              <Dna
-                visible={true}
-                height="60"
-                width="60"
-                ariaLabel="dna-loading"
-                wrapperStyle={{}}
-                wrapperClass="dna-wrapper"
-              />
-            ) : (
-              <Balance
-                balance={balance}
-                showInputBalance={showInputBalance}
-                handleDoubleClick={() => setShowInputBalance(true)}
-                setshowInputBalance={showInputBalance}
-                handleBlur={() => setShowInputBalance(false)}
-                reloadBalance={reloadBalance}
-              />
-            )}
-          </Stack>
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <h6>Daily Limit: </h6>
-            <Typography variant="h5" component="div">
-              ৳.
-            </Typography>
-            {loadingDailyLimit ? (
-              <Dna
-                visible={true}
-                height="60"
-                width="60"
-                ariaLabel="dna-loading"
-                wrapperStyle={{}}
-                wrapperClass="dna-wrapper"
-              />
-            ) : (
-              <DailyLimit
-                dailyLimit={dailyLimit}
-                showInputDailyLimit={showInputDailyLimit}
-                handleDoubleClick={() => setShowInputDailyLimit(true)}
-                setShowInputDailyLimit={showInputDailyLimit}
-                handleBlur={() => setShowInputDailyLimit(false)}
-                reloadDailyLimit={reloadDailyLimit}
-              />
-            )}
-          </Stack>
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <h6>Monthly Expense Target: </h6>
-            <Typography variant="h5" component="div">
-              ৳.
-            </Typography>
-            {loadingMonthlyExpenseTarget ? (
-              <Dna
-                visible={true}
-                height="60"
-                width="60"
-                ariaLabel="dna-loading"
-                wrapperStyle={{}}
-                wrapperClass="dna-wrapper"
-              />
-            ) : (
-              <MonthlyExpenseTarget
-                monthlyExpenseTarget={monthlyExpenseTarget}
-                showInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
-                handleDoubleClick={() => setShowInputMonthlyExpenseTarget(true)}
-                setshowInputMonthlyExpenseTarget={showInputMonthlyExpenseTarget}
-                handleBlur={() => setShowInputMonthlyExpenseTarget(false)}
-                reloadMonthlyExpenseTarget={reloadMonthlyExpenseTarget}
-              />
-            )}
-          </Stack>
-        </Stack>
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "15px",
+            backgroundColor: "#93C572",
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <CardContent>
+              <Typography
+                component="div"
+                variant="h6"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                color="white"
+              >
+                Current Balance:
+              </Typography>
+
+              {loadingBalance ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Dna
+                    visible={true}
+                    height="60"
+                    width="60"
+                    ariaLabel="dna-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="dna-wrapper"
+                  />
+                </div>
+              ) : (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Typography variant="h5" component="div">
+                    ৳.
+                  </Typography>
+                  <Balance
+                    balance={balance}
+                    showInputBalance={showInputBalance}
+                    handleDoubleClick={() => setShowInputBalance(true)}
+                    setshowInputBalance={showInputBalance}
+                    handleBlur={() => setShowInputBalance(false)}
+                    reloadBalance={reloadBalance}
+                  />
+                </Stack>
+              )}
+            </CardContent>
+          </Box>
+        </Card>
+
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "15px",
+            backgroundColor: "#93C572",
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <CardContent>
+              <Typography
+                component="div"
+                variant="h6"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                color="white"
+              >
+                Daily Limit:
+              </Typography>
+
+              {loadingDailyLimit ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Dna
+                    visible={true}
+                    height="60"
+                    width="60"
+                    ariaLabel="dna-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="dna-wrapper"
+                  />
+                </div>
+              ) : (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Typography variant="h5" component="div">
+                    ৳.
+                  </Typography>
+                  <DailyLimit
+                    dailyLimit={dailyLimit}
+                    showInputDailyLimit={showInputDailyLimit}
+                    handleDoubleClick={() => setShowInputDailyLimit(true)}
+                    setShowInputDailyLimit={showInputDailyLimit}
+                    handleBlur={() => setShowInputDailyLimit(false)}
+                    reloadDailyLimit={reloadDailyLimit}
+                  />
+                </Stack>
+              )}
+            </CardContent>
+          </Box>
+        </Card>
+
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "15px",
+            backgroundColor: "#93C572",
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <CardContent>
+              <Typography
+                component="div"
+                variant="h6"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                color="white"
+              >
+                Monthly Expense Target:
+              </Typography>
+
+              {loadingMonthlyExpenseTarget ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Dna
+                    visible={true}
+                    height="60"
+                    width="60"
+                    ariaLabel="dna-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="dna-wrapper"
+                  />
+                </div>
+              ) : (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Typography variant="h5" component="div">
+                    ৳.
+                  </Typography>
+                  <MonthlyExpenseTarget
+                    monthlyExpenseTarget={monthlyExpenseTarget}
+                    showInputMonthlyExpenseTarget={
+                      showInputMonthlyExpenseTarget
+                    }
+                    handleDoubleClick={() =>
+                      setShowInputMonthlyExpenseTarget(true)
+                    }
+                    setshowInputMonthlyExpenseTarget={
+                      showInputMonthlyExpenseTarget
+                    }
+                    handleBlur={() => setShowInputMonthlyExpenseTarget(false)}
+                    reloadMonthlyExpenseTarget={reloadMonthlyExpenseTarget}
+                  />
+                </Stack>
+              )}
+            </CardContent>
+          </Box>
+        </Card>
       </Layout>
     </>
   );
