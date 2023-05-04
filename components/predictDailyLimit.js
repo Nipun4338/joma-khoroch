@@ -78,7 +78,7 @@ export default function PredictDailyLimit(props) {
                   justifyContent="center"
                   color="white"
                 >
-                  Today you shouldn't spend more than 👉{" "}
+                  Today you shouldn't spend more than 🤬{" "}
                 </Typography>
                 <Stack
                   direction="row"
