@@ -5,10 +5,11 @@ import Layout from "../../components/layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DailyLimit from "../../components/dailyLimit";
-import { CircularProgress, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import MonthlyExpenseTarget from "../../components/monthlyExpenseTarget";
 import Balance from "../../components/balance";
 import PredictDailyLimit from "../../components/predictDailyLimit";
+import { Dna, Triangle } from "react-loader-spinner";
 
 export default function Insights() {
   const [balance, setBalance] = useState(0);
@@ -80,12 +81,12 @@ export default function Insights() {
     return newBalance;
   };
 
-  const ShowPredictedDailyLimit = () =>{
+  const ShowPredictedDailyLimit = () => {
     return (
-        <PredictDailyLimit
-            expenseList={expenseList}
-            monthlyExpenseTarget={monthlyExpenseTarget}
-          />
+      <PredictDailyLimit
+        expenseList={expenseList}
+        monthlyExpenseTarget={monthlyExpenseTarget}
+      />
     );
   };
 
@@ -104,7 +105,24 @@ export default function Insights() {
           <title>Joma Khoroch - Insights</title>
         </Head>
         {loading ? (
-          <CircularProgress />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <Triangle
+              height="80"
+              width="80"
+              color="#4fa94d"
+              ariaLabel="triangle-loading"
+              wrapperStyle={{}}
+              wrapperClassName=""
+              visible={true}
+            />
+          </div>
         ) : (
           <ShowPredictedDailyLimit />
         )}
@@ -120,7 +138,14 @@ export default function Insights() {
               ৳.
             </Typography>
             {loadingBalance ? (
-              <CircularProgress />
+              <Dna
+                visible={true}
+                height="60"
+                width="60"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+              />
             ) : (
               <Balance
                 balance={balance}
@@ -143,7 +168,14 @@ export default function Insights() {
               ৳.
             </Typography>
             {loadingDailyLimit ? (
-              <CircularProgress />
+              <Dna
+                visible={true}
+                height="60"
+                width="60"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+              />
             ) : (
               <DailyLimit
                 dailyLimit={dailyLimit}
@@ -166,7 +198,14 @@ export default function Insights() {
               ৳.
             </Typography>
             {loadingMonthlyExpenseTarget ? (
-              <CircularProgress />
+              <Dna
+                visible={true}
+                height="60"
+                width="60"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+              />
             ) : (
               <MonthlyExpenseTarget
                 monthlyExpenseTarget={monthlyExpenseTarget}
