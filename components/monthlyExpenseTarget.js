@@ -1,4 +1,4 @@
-import { TextField, useMediaQuery } from "@mui/material";
+import { TextField, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
@@ -48,9 +48,16 @@ export default function MonthlyExpenseTarget(props) {
           onClick={handleMonthlyExpenseTargetClick}
           style={{ cursor: "cell" }}
         >
-          <div className="row">
-            <h1 style={{ color: "green" }}>{props.monthlyExpenseTarget}</h1>
-          </div>
+          <Typography
+            color="green"
+            fontWeight="bolder"
+            display="flex"
+            variant="h4"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {props.monthlyExpenseTarget}
+          </Typography>
         </div>
       ) : (
         <TextField

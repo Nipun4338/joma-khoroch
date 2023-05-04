@@ -1,4 +1,4 @@
-import { TextField, useMediaQuery } from "@mui/material";
+import { TextField, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
@@ -47,9 +47,16 @@ export default function DailyLimit(props) {
           onClick={handleDailyLimitClick}
           style={{ cursor: "cell" }}
         >
-          <div className="row">
-            <h1 style={{ color: "green" }}>{props.dailyLimit}</h1>
-          </div>
+          <Typography
+            color="green"
+            fontWeight="bolder"
+            display="flex"
+            variant="h4"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {props.dailyLimit}
+          </Typography>
         </div>
       ) : (
         <TextField

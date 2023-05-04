@@ -7,8 +7,9 @@ import { useEffect, useState } from "react";
 import { Stack } from "@mui/system";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
-import { CircularProgress, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Link from "next/link";
+import { MagnifyingGlass, ProgressBar } from "react-loader-spinner";
 
 export default function Home() {
   const [balance, setBalance] = useState(0);
@@ -48,24 +49,50 @@ export default function Home() {
     return (
       <>
         {loadingList ? (
-          <CircularProgress />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <ProgressBar
+              height="80"
+              width="80"
+              ariaLabel="progress-bar-loading"
+              wrapperStyle={{}}
+              wrapperClass="progress-bar-wrapper"
+              borderColor="#F4442E"
+              barColor="#51E5FF"
+            />
+          </div>
         ) : !expenseList ? (
           <p>No List to show</p>
         ) : (
-          expenseList.map((expense, i) => {
-            return (
-              <ExpenseCard
-                key={i}
-                id={expense.expense_id}
-                title={expense.expense_title}
-                type={expense.expense_type}
-                details={expense.expense_details}
-                attention={expense.expense}
-                created={expense.created_date}
-                getExpenselist={getExpenselist}
-              />
-            );
-          })
+          <>
+            <Typography
+              sx={{ fontSize: 18 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              List of latest expenses
+            </Typography>
+            {expenseList.map((expense, i) => {
+              return (
+                <ExpenseCard
+                  key={i}
+                  id={expense.expense_id}
+                  title={expense.expense_title}
+                  type={expense.expense_type}
+                  details={expense.expense_details}
+                  attention={expense.expense}
+                  created={expense.created_date}
+                  getExpenselist={getExpenselist}
+                />
+              );
+            })}
+          </>
         )}
       </>
     );
@@ -88,7 +115,16 @@ export default function Home() {
             ৳.
           </Typography>
           {loadingBalance ? (
-            <CircularProgress />
+            <MagnifyingGlass
+              visible={true}
+              height="80"
+              width="80"
+              ariaLabel="MagnifyingGlass-loading"
+              wrapperStyle={{}}
+              wrapperClass="MagnifyingGlass-wrapper"
+              glassColor="#c0efff"
+              color="#e15b64"
+            />
           ) : (
             <>
               {balance > 1000 ? (
@@ -107,10 +143,28 @@ export default function Home() {
             </>
           )}
         </Stack>
-        <ExpenseEditCard getExpenselist={getExpenselist} />
-        <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
-          List of latest expenses
-        </Typography>
+        {loadingList ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <ProgressBar
+              height="80"
+              width="80"
+              ariaLabel="progress-bar-loading"
+              wrapperStyle={{}}
+              wrapperClass="progress-bar-wrapper"
+              borderColor="#F4442E"
+              barColor="#51E5FF"
+            />
+          </div>
+        ) : (
+          <ExpenseEditCard getExpenselist={getExpenselist} />
+        )}
         <ReloadExpenseList />
       </section>
     </Layout>

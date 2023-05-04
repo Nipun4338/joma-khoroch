@@ -1,4 +1,4 @@
-import { TextField, useMediaQuery } from "@mui/material";
+import { TextField, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
@@ -49,13 +49,27 @@ export default function Balance(props) {
           style={{ cursor: "cell" }}
         >
           {props.balance > 1000 ? (
-            <div className="row">
-              <h1 style={{ color: balanceTextColor[1] }}>{props.balance}</h1>
-            </div>
+            <Typography
+              color={balanceTextColor[1]}
+              fontWeight="bolder"
+              display="flex"
+              variant="h4"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {props.balance}
+            </Typography>
           ) : (
-            <div className="row">
-              <h1 style={{ color: balanceTextColor[0] }}>{props.balance}</h1>
-            </div>
+            <Typography
+              color={balanceTextColor[0]}
+              fontWeight="bolder"
+              display="flex"
+              variant="h4"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {props.balance}
+            </Typography>
           )}
         </div>
       ) : (
