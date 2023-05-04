@@ -10,6 +10,7 @@ import MonthlyExpenseTarget from "../../components/monthlyExpenseTarget";
 import Balance from "../../components/balance";
 import PredictDailyLimit from "../../components/predictDailyLimit";
 import { Dna, Triangle } from "react-loader-spinner";
+import TodayExpense from "../../components/todayExpense";
 
 export default function Insights() {
   const [balance, setBalance] = useState(0);
@@ -90,6 +91,14 @@ export default function Insights() {
     );
   };
 
+  const ShowTodayExpense = () => {
+    return (
+      <TodayExpense
+        expenseList={expenseList}
+      />
+    );
+  };
+
   useEffect(() => {
     getExpenselist();
   }, []);
@@ -124,7 +133,10 @@ export default function Insights() {
             />
           </div>
         ) : (
+          <>
           <ShowPredictedDailyLimit />
+          <ShowTodayExpense />
+          </>
         )}
         <Card
           sx={{
@@ -145,7 +157,7 @@ export default function Insights() {
                 justifyContent="center"
                 color="white"
               >
-                Current Balance:
+                Current Balance 🤫
               </Typography>
 
               {loadingBalance ? (
@@ -208,7 +220,7 @@ export default function Insights() {
                 justifyContent="center"
                 color="white"
               >
-                Daily Limit:
+                Daily Limit 😐
               </Typography>
 
               {loadingDailyLimit ? (
@@ -271,7 +283,7 @@ export default function Insights() {
                 justifyContent="center"
                 color="white"
               >
-                Monthly Expense Target:
+                Monthly Expense Target 😪
               </Typography>
 
               {loadingMonthlyExpenseTarget ? (
