@@ -1,6 +1,13 @@
-import { CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { Triangle } from "react-loader-spinner";
 
 export default function PredictDailyLimit(props) {
   const [tempExpense, setTempExpense] = useState(0);
@@ -32,28 +39,72 @@ export default function PredictDailyLimit(props) {
   return (
     <>
       {loading ? (
-        <CircularProgress />
-      ) : (
-        <Typography
-          variant="h5"
-          component="div"
-          border={5}
-          borderColor="black"
-          margin={2}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "10px",
+          }}
         >
-          Today you should not spend more than 👉{" "}
-          <div
-            style={{
-              color: "green",
+          <Triangle
+            height="80"
+            width="80"
+            color="#4fa94d"
+            ariaLabel="triangle-loading"
+            wrapperStyle={{}}
+            wrapperClassName=""
+            visible={true}
+          />
+        </div>
+      ) : (
+        <>
+          <Card
+            sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "3px solid red",
+              margin: "15px",
+              backgroundColor: "#93C572"
             }}
           >
-            ৳. {predictedDailyLimit}
-          </div>
-        </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <CardContent sx={{ flex: "1 0 auto" }}>
+                <Typography
+                  component="div"
+                  variant="h5"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  color="white"
+                >
+                  Today you shouldn't spend more than 👉{" "}
+                </Typography>
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={1}
+                >
+                  <Typography variant="h5" component="div">
+                    ৳.
+                  </Typography>
+                <Typography
+                  color="green"
+                  fontWeight="bolder"
+                  display="flex"
+                  variant="h4"
+                  alignItems="center"
+                  justifyContent="center"
+                  margin={1}
+                >
+                  {Math.round(predictedDailyLimit * 100) / 100}
+                </Typography>
+                </Stack>
+              </CardContent>
+            </Box>
+          </Card>
+        </>
       )}
     </>
   );

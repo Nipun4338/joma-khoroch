@@ -57,7 +57,7 @@ export default function ExpenseEditCard(props) {
   };
 
   const card = (
-    <Fragment>
+    <Card>
       <CardContent>
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
           <ToggleButtonGroup
@@ -126,13 +126,11 @@ export default function ExpenseEditCard(props) {
           </Button>
         </Stack>
       </CardContent>
-    </Fragment>
+    </Card>
   );
   return (
     <>
-      <Box sx={{ minWidth: 275, marginBottom: "10px" }}>
-        <Card variant="outlined">{card}</Card>
-      </Box>
+      <Box sx={{ minWidth: 275, marginBottom: "10px" }}>{card}</Box>
     </>
   );
 }

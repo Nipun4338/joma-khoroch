@@ -44,9 +44,12 @@ export default function ExpenseCard(props) {
 
   return (
     <>
+    <Card
+          sx={{
+            margin: "15px",
+          }}
+        >
       <Box sx={{ minWidth: 275, marginBottom: "10px" }}>
-        <Card variant="outlined">
-          <Fragment>
             <CardContent>
               <Stack
                 direction="row"
@@ -91,9 +94,8 @@ export default function ExpenseCard(props) {
                 </Button>
               </Stack>
             </CardContent>
-          </Fragment>
-        </Card>
       </Box>
+      </Card>
     </>
   );
 }
