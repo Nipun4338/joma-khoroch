@@ -11,6 +11,7 @@ import Balance from "../../components/balance";
 import PredictDailyLimit from "../../components/predictDailyLimit";
 import { Dna, Triangle } from "react-loader-spinner";
 import TodayExpense from "../../components/todayExpense";
+import MonthlyExpenseChart from "../../components/MonthlyExpenseChart";
 
 export default function Insights() {
   const [balance, setBalance] = useState(0);
@@ -92,11 +93,11 @@ export default function Insights() {
   };
 
   const ShowTodayExpense = () => {
-    return (
-      <TodayExpense
-        expenseList={expenseList}
-      />
-    );
+    return <TodayExpense expenseList={expenseList} />;
+  };
+
+  const ShowMonthlyExpenseChart = () => {
+    return <MonthlyExpenseChart expenseList={expenseList} />;
   };
 
   useEffect(() => {
@@ -134,8 +135,8 @@ export default function Insights() {
           </div>
         ) : (
           <>
-          <ShowPredictedDailyLimit />
-          <ShowTodayExpense />
+            <ShowPredictedDailyLimit />
+            <ShowTodayExpense />
           </>
         )}
         <Card
@@ -332,6 +333,27 @@ export default function Insights() {
             </CardContent>
           </Box>
         </Card>
+
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Dna
+              visible={true}
+              height="60"
+              width="60"
+              ariaLabel="dna-loading"
+              wrapperStyle={{}}
+              wrapperClass="dna-wrapper"
+            />
+          </div>
+        ) : (
+          <MonthlyExpenseChart expenseList={expenseList} />
+        )}
       </Layout>
     </>
   );
