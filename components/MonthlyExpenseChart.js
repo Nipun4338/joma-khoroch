@@ -11,6 +11,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  LogarithmicScale,
 } from "chart.js";
 import { Triangle } from "react-loader-spinner";
 
@@ -21,7 +22,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LogarithmicScale
 );
 
 export default function MonthlyExpenseChart(props) {
@@ -43,11 +45,12 @@ export default function MonthlyExpenseChart(props) {
     },
     scales: {
       y: {
+        type: "logarithmic",
         ticks: {
-          min: 0,
-          stepSize: 100,
-          callback: (value, index, values) =>
-            index + 1 == values.length ? 0 : value,
+          callback: function (value, index, values) {
+            //needed to change the scientific notation results from using logarithmic scale
+            return Number(value?.toString()); //pass tick values as a string into Number function
+          },
         },
       },
     },
