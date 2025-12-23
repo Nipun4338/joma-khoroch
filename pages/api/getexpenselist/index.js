@@ -11,9 +11,12 @@ export default async (req, res) => {
         "SELECT expense_id, expense_title, expense_details, created_date, updated_date, status, expense, expense_type from expenses order by created_date desc";
       const result = await conn.query(query);
       res.status(200).json(result);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Database error in getexpenselist:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   } else {
     // Not Signed in
-    res.status(401);
+    res.status(401).end();
   }
 };

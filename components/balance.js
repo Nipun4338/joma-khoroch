@@ -48,27 +48,37 @@ export default function Balance(props) {
           onClick={handleBalanceClick}
           style={{ cursor: "cell" }}
         >
-          {props.balance > 1000 ? (
+          {Number(props.balance) > 1000 ? (
             <Typography
-              color={balanceTextColor[1]}
-              fontWeight="bolder"
-              display="flex"
-              variant="h4"
-              alignItems="center"
-              justifyContent="center"
+              sx={{
+                color: "success.main",
+                fontWeight: 800,
+                display: "flex",
+                variant: "h4",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              {props.balance}
+              {Number(props.balance).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Typography>
           ) : (
             <Typography
-              color={balanceTextColor[0]}
-              fontWeight="bolder"
-              display="flex"
-              variant="h4"
-              alignItems="center"
-              justifyContent="center"
+              sx={{
+                color: "error.main",
+                fontWeight: 800,
+                display: "flex",
+                variant: "h4",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              {props.balance}
+              {Number(props.balance).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Typography>
           )}
         </div>

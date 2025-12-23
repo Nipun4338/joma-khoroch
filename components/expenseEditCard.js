@@ -1,10 +1,14 @@
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import { Fragment } from "react-is";
-import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { Stack } from "@mui/system";
+import {
+  Typography,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Stack,
+  Box,
+  Card,
+  CardContent,
+  Button,
+} from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
@@ -57,75 +61,96 @@ export default function ExpenseEditCard(props) {
   };
 
   const card = (
-    <Card>
-      <CardContent>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+    <Card
+      sx={{ borderRadius: 4, overflow: "hidden", border: "1px solid #e2e8f0" }}
+    >
+      <Box sx={{ bgcolor: "background.paper", p: 3 }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ mb: 3 }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            New Activity
+          </Typography>
           <ToggleButtonGroup
             color="primary"
             value={alignment}
             exclusive
             onChange={handleChange}
-            aria-label="Platform"
+            size="small"
+            sx={{
+              bgcolor: "#f1f5f9",
+              p: 0.5,
+              borderRadius: 2,
+              "& .MuiToggleButton-root": {
+                border: "none",
+                borderRadius: 1.5,
+                fontWeight: 700,
+                px: 2,
+                "&.Mui-selected": {
+                  bgcolor: "white",
+                  boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
+                  color: alignment === "add" ? "success.main" : "error.main",
+                  "&:hover": { bgcolor: "white" },
+                },
+              },
+            }}
           >
-            <ToggleButton
-              value="add"
-              sx={{ fontWeight: "bold" }}
-              label="Added"
-              color="success"
-            >
-              Added
-            </ToggleButton>
-            <ToggleButton
-              value="remove"
-              sx={{ fontWeight: "bold" }}
-              label="Removed"
-              color="error"
-            >
-              Removed
-            </ToggleButton>
+            <ToggleButton value="add">Income</ToggleButton>
+            <ToggleButton value="remove">Expense</ToggleButton>
           </ToggleButtonGroup>
         </Stack>
-        <Stack direction="column">
+
+        <Stack spacing={3}>
           <TextField
-            id="standard-basic"
-            label="Title"
+            fullWidth
+            label="What is this for?"
+            placeholder="e.g. Salary, Grocery, Rent"
             value={title}
             onChange={changeTitle}
-            variant="standard"
+            variant="outlined"
+            size="small"
           />
           <TextField
-            id="outlined-number"
-            label="Expense BDT"
+            fullWidth
+            label="Amount (BDT)"
             type="number"
-            variant="standard"
             value={expense}
             onChange={changeExpense}
+            variant="outlined"
+            size="small"
           />
           <TextField
-            id="filled-multiline-static"
-            label="Details"
+            fullWidth
+            label="Additional Details"
+            placeholder="N/A"
             value={details}
             onChange={changeDetails}
             multiline
             rows={2}
-            variant="standard"
+            variant="outlined"
+            size="small"
           />
         </Stack>
-        <Stack
-          sx={{ margin: "10px" }}
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-        >
+
+        <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={expenseInsert}
             variant="contained"
-            sx={{ fontWeight: "bold" }}
+            disableElevation
+            sx={{
+              px: 4,
+              py: 1,
+              borderRadius: 2,
+              fontWeight: 800,
+            }}
           >
-            + ADD
+            Save Transaction
           </Button>
-        </Stack>
-      </CardContent>
+        </Box>
+      </Box>
     </Card>
   );
   return (

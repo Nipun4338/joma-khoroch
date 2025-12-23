@@ -1,98 +1,148 @@
 import Head from "next/head";
-import styles from "./layout.module.css";
-import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
-import { Stack } from "@mui/system";
-import { Button, Typography } from "@mui/material";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Box,
+  IconButton,
+  Tooltip,
+  Stack,
+} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
-const name = "Joma Khoroch";
 export const siteTitle = "Joma Khoroch";
 
 export default function Layout({ children, home }) {
   const { data: session, status } = useSession();
-  if (status === "authenticated") {
-    return (
-      <div className={styles.container}>
-        <Head>
-          <link rel="icon" href="/favicon.ico" />
-          <meta name="description" content="An app to store debit and credit" />
-          <meta name="og:title" content={siteTitle} />
-        </Head>
-        <header className={styles.header}>
-          {home ? (
-            <>
-              <h1 className={utilStyles.heading2Xl}>{name}</h1>
-            </>
-          ) : (
-            <>
-              <h2 className={utilStyles.headingLg}>
-                <Link href="/" className={utilStyles.colorInherit}>
-                  {name}
-                </Link>
-              </h2>
-            </>
-          )}
-        </header>
-        <main>{children}</main>
-        {!home && (
-          <div className={styles.backToHome}>
-            <Link href="/">← Back to home</Link>
-          </div>
-        )}
-        <section className="grid h-screen place-items-center" style={{display: "flex", alignItems:"center", justifyContent: "center"}}>
-          <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            {/* <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Hello {session?.user?.name}</h2><br />
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">You are an admin user currently signed in as {session?.user?.email}.</p> */}
-            <Button
-              variant="contained"
-              sx={{ fontWeight: "bold",  }}
-              onClick={() => signOut()}
-            >
-              Logout
-            </Button>
-          </div>
-        </section>
-      </div>
-    );
-  }
+
   return (
-    <div className={styles.container}>
+    <Box
+      sx={{ flexGrow: 1, minHeight: "100vh", bgcolor: "background.default" }}
+    >
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <meta name="description" content="An app to store debit and credit" />
+        <meta
+          name="description"
+          content="Personal Finance Manager - Joma Khoroch"
+        />
         <meta name="og:title" content={siteTitle} />
       </Head>
-      <header className={styles.header}>
-        <Stack
-          border={2}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <div
-            style={{
-              margin: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography>
-              You are currently not authenticated. Click the login button to get
-              started!
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{ fontWeight: "bold" }}
-              onClick={() => signIn()}
-              style={{ marginLeft: "10px" }}
-            >
-              Login
-            </Button>
-          </div>
-        </Stack>
-      </header>
-    </div>
+
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          bgcolor: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(10px)",
+          borderBottom: "1px solid #e2e8f0",
+          color: "text.primary",
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <Box
+                component={Link}
+                href="/"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  textDecoration: "none",
+                  color: "primary.main",
+                }}
+              >
+                <AccountBalanceWalletIcon color="primary" />
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 800, letterSpacing: -0.5 }}
+                >
+                  JOMA KHOROCH
+                </Typography>
+              </Box>
+
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ display: { xs: "none", md: "flex" } }}
+              >
+                <Button
+                  component={Link}
+                  href="/"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 700,
+                    "&:hover": { color: "primary.main" },
+                  }}
+                >
+                  Dashboard
+                </Button>
+                <Button
+                  component={Link}
+                  href="/insights"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 700,
+                    "&:hover": { color: "primary.main" },
+                  }}
+                >
+                  Insights
+                </Button>
+              </Stack>
+            </Box>
+
+            {status === "authenticated" ? (
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "block" },
+                    textAlign: "right",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block", fontWeight: 700, opacity: 0.6 }}
+                  >
+                    SIGNED IN AS
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {session?.user?.email}
+                  </Typography>
+                </Box>
+                <Tooltip title="Log Out">
+                  <IconButton
+                    onClick={() => signOut()}
+                    color="primary"
+                    sx={{
+                      bgcolor: "rgba(99, 102, 241, 0.1)",
+                      "&:hover": { bgcolor: "rgba(99, 102, 241, 0.2)" },
+                    }}
+                  >
+                    <LogoutIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            ) : (
+              <Button
+                component={Link}
+                href="/auth/signin"
+                variant="contained"
+                size="small"
+                sx={{ borderRadius: 2, fontWeight: 700 }}
+              >
+                Sign In
+              </Button>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      <main style={{ paddingBottom: "40px" }}>{children}</main>
+    </Box>
   );
 }

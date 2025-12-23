@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
-  secret: process.env.NextAuth_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -42,9 +42,17 @@ export const authOptions = {
           }),
         });
         const user = await res.json();
+        console.log("Login API Response Status:", res.status);
+        console.log("Login API User Object:", user);
+
         if (res.ok && user) {
           return user;
-        } else return null;
+        } else {
+          console.log(
+            "Login failed: res.ok is false or user object is missing"
+          );
+          return null;
+        }
       },
     }),
     // ...add more providers here
