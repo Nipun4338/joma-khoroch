@@ -2,7 +2,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  // Support both casing variations for the secret
+  secret: process.env.NEXTAUTH_SECRET || process.env.NextAuth_SECRET,
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -27,10 +28,14 @@ export const authOptions = {
 
       async authorize(credentials, req) {
         const { email, password } = credentials;
-        let URL = "";
-        process.env.NODE_ENV === "production"
-          ? (URL = "https://joma-khoroch.vercel.app/api/login")
-          : (URL = "http://localhost:3000/api/login");
+
+        // Use NEXTAUTH_URL for the base path, falling back to localhost or the hardcoded legacy URL
+        const baseUrl =
+          process.env.NEXTAUTH_URL ||
+          (process.env.NODE_ENV === "production"
+            ? "https://joma-khoroch.vercel.app"
+            : "http://localhost:3000");
+        const URL = `${baseUrl}/api/login`;
         const res = await fetch(URL, {
           method: "POST",
           headers: {
