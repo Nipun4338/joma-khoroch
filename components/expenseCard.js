@@ -1,17 +1,24 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { Fragment } from "react-is";
-import { Button, Chip, CircularProgress } from "@mui/material";
-import { Stack } from "@mui/system";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Chip,
+  Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function ExpenseCard(props) {
-  const [prop, setProp] = useState(props);
-  const [loading, setLoading] = useState(true);
+  const { id, title, type, details, attention, created, getExpenselist } =
+    props;
 
   var options = {
     weekday: "long",
@@ -19,83 +26,157 @@ export default function ExpenseCard(props) {
     month: "long",
     day: "numeric",
   };
-  let dateLocal = new Date(props.created);
+  let dateLocal = new Date(created);
   const createdDate = dateLocal.toLocaleDateString("en-US", options);
   const createdTime = dateLocal.toLocaleTimeString("en-US");
 
-  useEffect(() => {
-    setProp(props);
-    setLoading(false);
-  }, [setProp]);
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const expenseDelete = () => {
     let data = {
-      id: prop.id,
+      id: id,
     };
     axios
       .post("/api/deleteexpense", data)
       .then(async (response) => {
-        await props.getExpenselist(false);
-        //push("/");
-        //window.location.reload(true);
+        handleClose();
+        await getExpenselist(false);
       })
-      .catch((e) => {});
+      .catch((e) => {
+        console.error("Error deleting expense:", e);
+      });
   };
 
   return (
     <>
-    <Card
-          sx={{
-            margin: "15px",
-          }}
-        >
-      <Box sx={{ minWidth: 275, marginBottom: "10px" }}>
-            <CardContent>
-              <Stack
-                direction="row"
-                justifyContent="flex-end"
-                alignItems="center"
-              >
-                {loading ? (
-                  <CircularProgress />
-                ) : (
-                  <Chip
-                    sx={{ fontWeight: "bold" }}
-                    label={prop.type == "add" ? "Added" : "Removed"}
-                    color={prop.type == "add" ? "success" : "error"}
-                  />
-                )}
-              </Stack>
-              <Typography
-                sx={{ fontSize: 18 }}
-                color="text.secondary"
-                gutterBottom
-              >
-                {prop.title}
-              </Typography>
-              <Typography variant="h5" component="div">
-                ৳. {prop.attention}
-              </Typography>
-              <Typography sx={{ mb: 1.2, fontSize: 13 }} color="text.secondary">
-                {createdDate} at {createdTime}
-              </Typography>
-              <Typography variant="body2">{prop.details}</Typography>
-              <Stack
-                direction="row"
-                justifyContent="flex-end"
-                alignItems="center"
-              >
-                <Button
-                  onClick={expenseDelete}
-                  variant="contained"
-                  sx={{ fontWeight: "bold", backgroundColor: "red" }}
+      <Card
+        sx={{
+          margin: "15px",
+          borderRadius: 4,
+          background: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+        }}
+      >
+        <Box sx={{ minWidth: 275, p: 1 }}>
+          <CardContent>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-start"
+              sx={{ mb: 2 }}
+            >
+              <Box>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 700, color: "text.primary" }}
                 >
-                  DELETE
-                </Button>
-              </Stack>
-            </CardContent>
-      </Box>
+                  {title}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {createdDate} • {createdTime}
+                </Typography>
+              </Box>
+              <Chip
+                sx={{
+                  fontWeight: 800,
+                  fontSize: "0.75rem",
+                  height: 24,
+                  textTransform: "uppercase",
+                }}
+                label={type == "add" ? "Added" : "Expense"}
+                color={type == "add" ? "success" : "error"}
+              />
+            </Stack>
+
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 800,
+                color: type === "add" ? "success.main" : "error.main",
+                mb: 1,
+              }}
+            >
+              {type === "add" ? "+" : "-"}৳
+              {Math.abs(Number(attention)).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              {details}
+            </Typography>
+
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              <Button
+                onClick={handleClickOpen}
+                variant="outlined"
+                color="error"
+                size="small"
+                sx={{
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  borderWidth: 2,
+                  "&:hover": { borderWidth: 2 },
+                }}
+              >
+                Remove
+              </Button>
+            </Stack>
+          </CardContent>
+        </Box>
       </Card>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          sx: { borderRadius: 3, p: 1 },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ fontWeight: 800 }}>
+          {"Confirm Deletion"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this entry? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ pb: 2, px: 3 }}>
+          <Button
+            onClick={handleClose}
+            color="inherit"
+            sx={{ fontWeight: 700 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={expenseDelete}
+            color="error"
+            variant="contained"
+            autoFocus
+            sx={{ fontWeight: 700, borderRadius: 2 }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

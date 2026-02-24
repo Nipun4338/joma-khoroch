@@ -1,94 +1,118 @@
 import { useRef } from "react";
 import { getProviders, getSession, signIn } from "next-auth/react";
-import { Button, Input } from "@mui/material";
+import {
+  Button,
+  Input,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Label,
+} from "@mui/material";
 import { Stack } from "@mui/system";
+
+import { TextField, Container, Paper } from "@mui/material";
 
 const Signin = ({ providers }) => {
   const email = useRef("");
   const password = useRef("");
+
   return (
-    <Stack
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "background.default",
+        background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
+        padding: "20px",
+      }}
     >
-      <div
-        style={{
-          margin: "10px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div className="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center" style={{border: "2px solid black", padding: "10px"}}>
-          <div className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md">
-            <div className="p-5 bg-white md:flex-1">
-              <h3 className="my-4 text-2xl font-semibold text-gray-700">
-                Account Login
-              </h3>
-              <form action="#" className="flex flex-col space-y-5">
-                <Stack margin={2}>
-                <div className="flex flex-col space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="email"
-                      className="text-sm font-semibold text-gray-500"
-                      style={{ marginRight: "10px" }}
-                    >
-                      Email
-                    </label>
-                    </div>
-                    <Input
-                      type="email"
-                      id="email"
-                      autoFocus
-                      onChange={(e) => (email.current = e.target.value)}
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label
-                        htmlFor="password"
-                        className="text-sm font-semibold text-gray-500"
-                        style={{ marginRight: "10px" }}
-                      >
-                        Password
-                      </label>
-                    </div>
-                    <Input
-                      type="password"
-                      id="password"
-                      className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-                      onChange={(e) => (password.current = e.target.value)}
-                    />
-                  </div>
-                </Stack>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-end",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    sx={{ fontWeight: "bold" }}
-                    onClick={() =>
-                      signIn("credentials", {
-                        email: email.current,
-                        password: password.current,
-                      })
-                    }
-                  >
-                    Log in
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Stack>
+      <Container maxWidth="xs">
+        <Paper
+          elevation={0}
+          sx={{
+            p: 5,
+            borderRadius: 6,
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <Box sx={{ mb: 4, textAlign: "center" }}>
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: 900, mb: 1, color: "primary.main" }}
+            >
+              Joma Khoroch
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ fontWeight: 500 }}
+            >
+              Welcome back! Please enter your details.
+            </Typography>
+          </Box>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              signIn("credentials", {
+                email: email.current,
+                password: password.current,
+              });
+            }}
+          >
+            <Stack spacing={3}>
+              <TextField
+                fullWidth
+                label="Email Address"
+                type="email"
+                variant="outlined"
+                onChange={(e) => (email.current = e.target.value)}
+                required
+              />
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="outlined"
+                onChange={(e) => (password.current = e.target.value)}
+                required
+              />
+              <Button
+                variant="contained"
+                type="submit"
+                fullWidth
+                size="large"
+                sx={{
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontSize: "1rem",
+                  fontWeight: 800,
+                  boxShadow: "0 10px 15px -3px rgba(99, 102, 241, 0.3)",
+                }}
+              >
+                Sign In
+              </Button>
+            </Stack>
+          </form>
+
+          <Box sx={{ mt: 4, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              Default Project Credentials:
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ fontFamily: "monospace", fontWeight: 700 }}
+            >
+              user@example.com / password123
+            </Typography>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

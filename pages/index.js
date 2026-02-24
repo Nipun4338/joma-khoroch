@@ -2,17 +2,28 @@ import React from "react";
 import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Stack } from "@mui/system";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import {
+  Button,
+  Grid,
+  Typography,
+  Box,
+  Stack,
+  Container,
+  Paper,
+} from "@mui/material";
+import Link from "next/link";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
-import { Button, Grid, Typography } from "@mui/material";
-import Link from "next/link";
 import { MagnifyingGlass, ProgressBar } from "react-loader-spinner";
 import ExportAsCSV from "../components/exportAsCSV";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [initialBalance, setInitialBalance] = useState(0);
   const [expenseList, setExpenseList] = useState();
@@ -20,6 +31,12 @@ export default function Home() {
   const [loadingList, setLoadingList] = useState(true);
   const [visible, setVisible] = useState(5);
   const [loadMore, setLoadMore] = useState(false);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   const showMoreItems = async () => {
     setLoadMore(true);
@@ -35,7 +52,7 @@ export default function Home() {
     let response2 = await axios.get("/api/getbalance");
     setExpenseList(response.data.rows);
     const newBalance = initializeBalance(response.data.rows);
-    const bl = response2.data.rows[0]["current_balance"];
+    const bl = Number(response2.data.rows[0]["current_balance"]);
     setInitialBalance(bl);
     setBalance(newBalance + bl);
     setLoadingBalance(false);
@@ -43,13 +60,15 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getExpenselist(true);
-  }, []);
+    if (status === "authenticated") {
+      getExpenselist(true);
+    }
+  }, [status]);
 
   const initializeBalance = (expenseList) => {
     let newBalance = 0;
-    expenseList.map((expense) => {
-      newBalance = newBalance + expense.expense;
+    expenseList?.forEach((expense) => {
+      newBalance = newBalance + Number(expense.expense);
     });
     return newBalance;
   };
@@ -58,166 +77,205 @@ export default function Home() {
     return (
       <>
         {loadingList ? (
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: "10px",
+              py: 4,
             }}
           >
             <ProgressBar
               height="80"
               width="80"
-              ariaLabel="progress-bar-loading"
-              wrapperStyle={{}}
-              wrapperClass="progress-bar-wrapper"
-              borderColor="#F4442E"
-              barColor="#51E5FF"
+              borderColor="#6366f1"
+              barColor="#818cf8"
             />
-          </div>
+          </Box>
         ) : !expenseList ? (
-          <p>No List to show</p>
+          <Typography textAlign="center">No activities to show</Typography>
         ) : (
-          <>
-            <Grid
-              container
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          <Box sx={{ mt: 4 }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ px: 2, mb: 2 }}
             >
-              <Grid item xs={6}>
-                <Typography
-                  sx={{ fontSize: 18 }}
-                  color="text.secondary"
-                  gutterBottom
-                >
-                  List of latest expenses
-                </Typography>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                display="flex"
-                alignItems="flex-end"
-                justifyContent="flex-end"
-              >
-                <ExportAsCSV expenseList={expenseList} />
-              </Grid>
-            </Grid>
-            {expenseList?.slice(0, visible).map((expense, i) => {
-              return (
-                <ExpenseCard
-                  key={i}
-                  id={expense.expense_id}
-                  title={expense.expense_title}
-                  type={expense.expense_type}
-                  details={expense.expense_details}
-                  attention={expense.expense}
-                  created={expense.created_date}
-                  getExpenselist={getExpenselist}
-                />
-              );
-            })}
-            <div>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                Recent Activities
+              </Typography>
+              <ExportAsCSV expenseList={expenseList} />
+            </Stack>
+
+            <Box>
+              {expenseList?.slice(0, visible).map((expense, i) => {
+                return (
+                  <ExpenseCard
+                    key={i}
+                    id={expense.expense_id}
+                    title={expense.expense_title}
+                    type={expense.expense_type}
+                    details={expense.expense_details}
+                    attention={expense.expense}
+                    created={expense.created_date}
+                    getExpenselist={getExpenselist}
+                  />
+                );
+              })}
+            </Box>
+
+            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
               {loadMore ? (
                 <MagnifyingGlass
                   visible={true}
-                  height="80"
-                  width="80"
-                  ariaLabel="MagnifyingGlass-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="MagnifyingGlass-wrapper"
-                  glassColor="#c0efff"
-                  color="#e15b64"
+                  height="40"
+                  width="40"
+                  color="#6366f1"
                 />
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "10px"
-                  }}
+                <Button
+                  onClick={showMoreItems}
+                  variant="outlined"
+                  sx={{ borderRadius: 4, px: 4 }}
                 >
-                  <Button onClick={showMoreItems}>Load More</Button>
-                </div>
+                  Load More History
+                </Button>
               )}
-            </div>
-          </>
+            </Box>
+          </Box>
         )}
       </>
     );
   };
+
+  if (status === "loading") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <ProgressBar
+          height="100"
+          width="100"
+          borderColor="#6366f1"
+          barColor="#818cf8"
+        />
+      </Box>
+    );
+  }
+
+  if (!session) return null;
 
   return (
     <Layout home>
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <section className={utilStyles.headingMd}>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
+
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        {/* Hero Balance Section */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            borderRadius: 6,
+            background: "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)",
+            color: "white",
+            textAlign: "center",
+            mb: 4,
+            position: "relative",
+            overflow: "hidden",
+          }}
         >
-          <h6>Current Balance: </h6>
-          <Typography variant="h5" component="div">
-            ৳.
-          </Typography>
-          {loadingBalance ? (
-            <MagnifyingGlass
-              visible={true}
-              height="80"
-              width="80"
-              ariaLabel="MagnifyingGlass-loading"
-              wrapperStyle={{}}
-              wrapperClass="MagnifyingGlass-wrapper"
-              glassColor="#c0efff"
-              color="#e15b64"
-            />
-          ) : (
-            <>
-              {balance > 1000 ? (
-                <div className="row">
-                  <Link href="/insights">
-                    <h1 style={{ color: "green" }}>{balance}</h1>
-                  </Link>
-                </div>
-              ) : (
-                <div className="row">
-                  <Link href="/insights">
-                    <h1 style={{ color: "red" }}>{balance}</h1>
-                  </Link>
-                </div>
-              )}
-            </>
-          )}
-        </Stack>
-        {loadingList ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "10px",
+          <Box sx={{ position: "relative", zIndex: 1 }}>
+            <Typography
+              variant="overline"
+              sx={{ opacity: 0.8, fontWeight: 700, letterSpacing: 2 }}
+            >
+              YOUR CURRENT BALANCE
+            </Typography>
+
+            {loadingBalance ? (
+              <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+                <ProgressBar
+                  height="60"
+                  width="60"
+                  borderColor="#fff"
+                  barColor="#fff"
+                />
+              </Box>
+            ) : (
+              <Box>
+                <Typography variant="h2" sx={{ fontWeight: 900, mb: 1 }}>
+                  ৳
+                  {Number(balance).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </Typography>
+                <Button
+                  component={Link}
+                  href="/insights"
+                  variant="contained"
+                  sx={{
+                    bgcolor: "rgba(255,255,255,0.2)",
+                    backdropFilter: "blur(10px)",
+                    "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+                  }}
+                >
+                  View Financial Insights
+                </Button>
+              </Box>
+            )}
+          </Box>
+
+          {/* Decorative Circles */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: -50,
+              right: -50,
+              width: 200,
+              height: 200,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.1)",
             }}
-          >
-            <ProgressBar
-              height="80"
-              width="80"
-              ariaLabel="progress-bar-loading"
-              wrapperStyle={{}}
-              wrapperClass="progress-bar-wrapper"
-              borderColor="#F4442E"
-              barColor="#51E5FF"
-            />
-          </div>
-        ) : (
-          <ExpenseEditCard getExpenselist={getExpenselist} />
-        )}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: -20,
+              left: -20,
+              width: 100,
+              height: 100,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.1)",
+            }}
+          />
+        </Paper>
+
+        <Box sx={{ mb: 4 }}>
+          {loadingList ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <ProgressBar
+                height="60"
+                width="60"
+                borderColor="#6366f1"
+                barColor="#818cf8"
+              />
+            </Box>
+          ) : (
+            <ExpenseEditCard getExpenselist={getExpenselist} />
+          )}
+        </Box>
+
         <ReloadExpenseList />
-      </section>
+      </Container>
     </Layout>
   );
 }

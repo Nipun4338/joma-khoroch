@@ -1,104 +1,98 @@
-import {
-    Box,
-    Card,
-    CardContent,
-    Stack,
-    Typography,
-  } from "@mui/material";
-  import dayjs from "dayjs";
-  import { useEffect, useState } from "react";
-  import { Triangle } from "react-loader-spinner";
-  
-  export default function TodayExpense(props) {
-    const [todayExpense, setTodayExpense] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const today = dayjs().format("YYYY-MM-DD");
-  
-    useEffect(() => {
-      setLoading(true);
-      let temp = 0;
-      props.expenseList?.map((expense, i) => {
-        dayjs(expense.created_date).format("YYYY-MM-DD") >= today &&
-        dayjs(expense.created_date).format("YYYY-MM-DD") <= today &&
-        expense.expense_type == "remove"
-          ? (temp += expense.expense)
-          : null;
-      });
-      setTodayExpense(temp);
-      setLoading(false);
-    }, []);
-  
-    return (
-      <>
-        {loading ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "10px",
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Triangle } from "react-loader-spinner";
+
+export default function TodayExpense(props) {
+  const [todayExpense, setTodayExpense] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const today = dayjs().format("YYYY-MM-DD");
+
+  useEffect(() => {
+    setLoading(true);
+    let temp = 0;
+    props.expenseList?.forEach((expense, i) => {
+      const expenseDate = dayjs(expense.created_date).format("YYYY-MM-DD");
+      if (expenseDate === today && expense.expense_type === "remove") {
+        temp += Number(expense.expense);
+      }
+    });
+    setTodayExpense(temp);
+    setLoading(false);
+  }, [props.expenseList]);
+
+  return (
+    <>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "10px",
+          }}
+        >
+          <Triangle
+            height="80"
+            width="80"
+            color="#4fa94d"
+            ariaLabel="triangle-loading"
+            wrapperStyle={{}}
+            wrapperClassName=""
+            visible={true}
+          />
+        </div>
+      ) : (
+        <>
+          <Card
+            sx={{
+              margin: "15px",
+              borderRadius: 4,
+              border: "1px solid #e2e8f0",
+              bgcolor: "background.paper",
             }}
           >
-            <Triangle
-              height="80"
-              width="80"
-              color="#4fa94d"
-              ariaLabel="triangle-loading"
-              wrapperStyle={{}}
-              wrapperClassName=""
-              visible={true}
-            />
-          </div>
-        ) : (
-          <>
-            <Card
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "15px",
-                backgroundColor: "#E0115F"
-              }}
-            >
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <CardContent sx={{ flex: "1 0 auto" }}>
+            <Box sx={{ p: 2 }}>
+              <CardContent sx={{ textAlign: "center" }}>
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  sx={{ fontWeight: 700, letterSpacing: 1 }}
+                >
+                  Today's Spending 🥺
+                </Typography>
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="baseline"
+                  spacing={1}
+                  sx={{ mt: 1 }}
+                >
                   <Typography
-                    component="div"
-                    variant="h5"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    color="white"
+                    variant="h6"
+                    color="text.secondary"
+                    sx={{ fontWeight: 500 }}
                   >
-                    Today's Expense 🥺{" "}
+                    ৳
                   </Typography>
-                  <Stack
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="center"
-                    spacing={1}
-                  >
-                    <Typography variant="h5" component="div">
-                      ৳.
-                    </Typography>
                   <Typography
-                    color="#913831"
-                    fontWeight="bolder"
-                    display="flex"
-                    variant="h4"
-                    alignItems="center"
-                    justifyContent="center"
-                    margin={1}
+                    sx={{
+                      color: "error.main",
+                      fontWeight: 900,
+                      fontSize: "2.5rem",
+                    }}
                   >
-                    {todayExpense}
+                    {Number(Math.abs(todayExpense)).toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </Typography>
-                  </Stack>
-                </CardContent>
-              </Box>
-            </Card>
-          </>
-        )}
-      </>
-    );
-  }
-  
+                </Stack>
+              </CardContent>
+            </Box>
+          </Card>
+        </>
+      )}
+    </>
+  );
+}

@@ -1,6 +1,6 @@
-import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography, useTheme } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  LogarithmicScale,
+  Filler,
 } from "chart.js";
 import { Triangle } from "react-loader-spinner";
 
@@ -23,180 +23,184 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  LogarithmicScale
+  Filler
 );
 
-export default function MonthlyExpenseChart(props) {
-  const [tempExpense, setTempExpense] = useState(0);
+export default function MonthlyExpenseChart({ expenseList }) {
   const [loading, setLoading] = useState(true);
-  const [dataChart, setDataChart] = useState(null);
-  const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD hh:mm");
-  const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD hh:mm");
-  const currentDayFormat = dayjs().format("YYYY-MM-DD hh:mm");
-  const currentMonth = dayjs().format("MMMM-YYYY");
-  const maxDay = parseInt(dayjs().endOf("month").format("DD"));
+  const [chartData, setChartData] = useState(null);
+  const theme = useTheme();
+
+  const currentMonth = dayjs().format("MMMM YYYY");
+  const daysInMonth = dayjs().daysInMonth();
+
+  useEffect(() => {
+    if (!expenseList) return;
+
+    setLoading(true);
+    const startOfMonth = dayjs().startOf("month");
+
+    // Initialize days of the month
+    const dailyExpenses = new Array(daysInMonth).fill(0);
+    const dailyIncome = new Array(daysInMonth).fill(0);
+    const labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+    expenseList.forEach((item) => {
+      const date = dayjs(item.created_date);
+      if (date.isSame(startOfMonth, "month")) {
+        const day = date.date() - 1;
+        if (item.expense_type === "remove") {
+          dailyExpenses[day] += Math.abs(Number(item.expense));
+        } else {
+          dailyIncome[day] += Math.abs(Number(item.expense));
+        }
+      }
+    });
+
+    setChartData({
+      labels,
+      datasets: [
+        {
+          fill: true,
+          label: "Daily Expenses",
+          data: dailyExpenses,
+          borderColor: theme.palette.error.main,
+          backgroundColor: (context) => {
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return null;
+            const gradient = ctx.createLinearGradient(
+              0,
+              chartArea.top,
+              0,
+              chartArea.bottom
+            );
+            gradient.addColorStop(0, "rgba(239, 68, 68, 0.2)");
+            gradient.addColorStop(1, "rgba(239, 68, 68, 0)");
+            return gradient;
+          },
+          tension: 0.4,
+          pointRadius: 2,
+          pointHoverRadius: 6,
+          borderWidth: 3,
+        },
+        {
+          fill: true,
+          label: "Daily Income",
+          data: dailyIncome,
+          borderColor: theme.palette.success.main,
+          backgroundColor: (context) => {
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return null;
+            const gradient = ctx.createLinearGradient(
+              0,
+              chartArea.top,
+              0,
+              chartArea.bottom
+            );
+            gradient.addColorStop(0, "rgba(16, 185, 129, 0.2)");
+            gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
+            return gradient;
+          },
+          tension: 0.4,
+          pointRadius: 2,
+          pointHoverRadius: 6,
+          borderWidth: 3,
+        },
+      ],
+    });
+    setLoading(false);
+  }, [expenseList, theme]);
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
+        display: true,
         position: "top",
+        align: "end",
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: { family: theme.typography.fontFamily, weight: 600 },
+        },
+      },
+      tooltip: {
+        backgroundColor: "#fff",
+        titleColor: "#1e293b",
+        bodyColor: "#475569",
+        borderColor: "#e2e8f0",
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 8,
+        usePointStyle: true,
+        callbacks: {
+          label: (context) => ` ৳${context.parsed.y.toLocaleString()}`,
+        },
       },
     },
     scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 }, color: theme.palette.text.secondary },
+      },
       y: {
-        type: "logarithmic",
+        beginAtZero: true,
+        grid: { borderDash: [5, 5], color: "#e2e8f0" },
         ticks: {
-          callback: function (value, index, values) {
-            //needed to change the scientific notation results from using logarithmic scale
-            return Number(value?.toString()); //pass tick values as a string into Number function
-          },
+          callback: (value) => "৳" + value,
+          font: { size: 11 },
+          color: theme.palette.text.secondary,
         },
       },
     },
   };
 
-  let labels = [];
-  let data = [];
-  let data2 = [];
-
-  function onlyUnique(value, index, array) {
-    return array.indexOf(value) === index;
-  }
-
-  useEffect(() => {
-    setLoading(true);
-    let temp = 0;
-    var map = {};
-    var add = {};
-    props.expenseList?.map((expense, i) => {
-      if (
-        dayjs(expense.created_date).format("YYYY-MM-DD hh:mm") >=
-          startOfMonth &&
-        dayjs(expense.created_date).format("YYYY-MM-DD hh:mm") <=
-          currentDayFormat
-      ) {
-        labels.push(parseInt(dayjs(expense.created_date).format("DD")));
-        if (expense.expense_type == "remove") {
-          if (add[parseInt(dayjs(expense.created_date).format("DD"))] == null) {
-            add[parseInt(dayjs(expense.created_date).format("DD"))] = 0;
-          }
-          if (map[parseInt(dayjs(expense.created_date).format("DD"))] != null) {
-            map[parseInt(dayjs(expense.created_date).format("DD"))] -=
-              expense.expense;
-          } else {
-            map[parseInt(dayjs(expense.created_date).format("DD"))] = 0;
-            map[parseInt(dayjs(expense.created_date).format("DD"))] -=
-              expense.expense;
-          }
-        } else {
-          if (map[parseInt(dayjs(expense.created_date).format("DD"))] == null) {
-            map[parseInt(dayjs(expense.created_date).format("DD"))] = 0;
-          }
-          if (add[parseInt(dayjs(expense.created_date).format("DD"))] != null) {
-            add[parseInt(dayjs(expense.created_date).format("DD"))] +=
-              expense.expense;
-          } else {
-            add[parseInt(dayjs(expense.created_date).format("DD"))] = 0;
-            add[parseInt(dayjs(expense.created_date).format("DD"))] +=
-              expense.expense;
-          }
-        }
-      }
-    });
-    for (var key in map) {
-      labels.push(parseInt(key));
-      data.push(map[key]);
-    }
-
-    for (var key in add) {
-      labels.push(parseInt(key));
-      data2.push(add[key]);
-    }
-
-    labels = labels.filter(onlyUnique);
-    labels = labels.sort(function (a, b) {
-      return a - b;
-    });
-
-    setDataChart({
-      labels: labels,
-      datasets: [
-        {
-          label: currentMonth,
-          data: data,
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
-        },
-        {
-          label: "Earn",
-          data: data2,
-          borderColor: "rgb(53, 162, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-      ],
-    });
-    setTempExpense(temp);
-    setLoading(false);
-  }, []);
-
   return (
-    <>
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "10px",
-          }}
-        >
-          <Triangle
-            height="80"
-            width="80"
-            color="#4fa94d"
-            ariaLabel="triangle-loading"
-            wrapperStyle={{}}
-            wrapperClassName=""
-            visible={true}
-          />
-        </div>
-      ) : (
-        <>
-          <Card
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "15px",
-              backgroundColor: "#FFF",
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent sx={{ flex: "1 0 auto" }}>
-                <Typography
-                  component="div"
-                  variant="p"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color="black"
-                >
-                  Monthly Expense Chart 📈
-                </Typography>
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                  spacing={1}
-                >
-                  <Line options={options} data={dataChart} />
-                </Stack>
-              </CardContent>
+    <Card
+      sx={{
+        borderRadius: 4,
+        overflow: "hidden",
+        border: "1px solid #e2e8f0",
+        height: 400,
+      }}
+    >
+      <CardContent
+        sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+      >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800 }}>
+            {currentMonth} Trends
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Visualize your daily spending vs earnings
+          </Typography>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+          {loading || !chartData ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <Triangle
+                height="60"
+                width="60"
+                color={theme.palette.primary.main}
+                visible={true}
+              />
             </Box>
-          </Card>
-        </>
-      )}
-    </>
+          ) : (
+            <Line options={options} data={chartData} />
+          )}
+        </Box>
+      </CardContent>
+    </Card>
   );
 }

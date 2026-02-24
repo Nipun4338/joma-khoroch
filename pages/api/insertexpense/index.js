@@ -20,11 +20,13 @@ export default async (req, res) => {
         req.body.type,
       ];
       const result = await conn.query(query, values);
-      res.send(result);
-    } catch (error) {}
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Database error in insertexpense:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   } else {
     // Not Signed in
-    res.status(401);
+    res.status(401).end();
   }
-  res.end();
 };
