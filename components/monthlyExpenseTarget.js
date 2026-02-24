@@ -49,14 +49,19 @@ export default function MonthlyExpenseTarget(props) {
           style={{ cursor: "cell" }}
         >
           <Typography
-            color="green"
-            fontWeight="bolder"
-            display="flex"
-            variant="h4"
-            alignItems="center"
-            justifyContent="center"
+            sx={{
+              color: "primary.main",
+              fontWeight: 800,
+              display: "flex",
+              variant: "h4",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            {props.monthlyExpenseTarget}
+            {Number(props.monthlyExpenseTarget).toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </Typography>
         </div>
       ) : (
