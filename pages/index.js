@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import ExpenseCard from "../components/expenseCard";
 import ExpenseEditCard from "../components/expenseEditCard";
+import VoiceCapture from "../components/voiceCapture";
 import { MagnifyingGlass, ProgressBar } from "react-loader-spinner";
 import ExportAsCSV from "../components/exportAsCSV";
 
@@ -270,7 +271,10 @@ export default function Home() {
               />
             </Box>
           ) : (
-            <ExpenseEditCard getExpenselist={getExpenselist} />
+            <>
+              <VoiceCapture getExpenselist={getExpenselist} />
+              <ExpenseEditCard getExpenselist={getExpenselist} />
+            </>
           )}
         </Box>
 

@@ -8,7 +8,7 @@ export default async (req, res) => {
     // Signed in
     try {
       const query =
-        "INSERT INTO expenses(expense_title, expense_details, created_date, updated_date, status, expense, expense_type) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+        "INSERT INTO expenses(expense_title, expense_details, created_date, updated_date, status, expense, expense_type, category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
       const date = new Date();
       const values = [
         req.body.title,
@@ -18,6 +18,7 @@ export default async (req, res) => {
         true,
         req.body.expense,
         req.body.type,
+        req.body.category ?? null,
       ];
       const result = await conn.query(query, values);
       res.status(200).json(result);

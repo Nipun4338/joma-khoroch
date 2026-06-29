@@ -1,0 +1,29 @@
+{
+  "name": "@jk/api",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "predev": "npm --prefix ../.. run build:shared",
+    "dev": "tsx watch src/index.ts",
+    "build": "npm --prefix ../.. run build:shared && tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "db:setup": "tsx src/scripts/setup-db.ts"
+  },
+  "dependencies": {
+    "@jk/shared": "0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.6",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

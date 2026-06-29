@@ -1,0 +1,12 @@
+node_modules/
+dist/
+# The web app consumes @jk/shared's compiled output at build time (via a file:
+# dependency), so this one dist must be committed for production builds to work.
+!packages/shared/dist/
+!packages/shared/dist/**
+.expo/
+.expo-shared/
+*.log
+.env
+.env.local
+.DS_Store

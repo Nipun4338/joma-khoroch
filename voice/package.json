@@ -1,0 +1,16 @@
+{
+  "name": "joma-khoroch-voice",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Voice-first capture for Joma Khoroch — speak a transaction, get structured data. Expo + Express monorepo.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build --workspace @jk/shared",
+    "test:shared": "npm run test --workspace @jk/shared",
+    "dev:api": "npm run dev --workspace @jk/api",
+    "dev:mobile": "npm run start --workspace @jk/mobile"
+  }
+}
