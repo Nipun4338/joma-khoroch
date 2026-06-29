@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
   // Support both casing variations for the secret
@@ -60,9 +61,35 @@ export const authOptions = {
         }
       },
     }),
-    // ...add more providers here
+    // Google OAuth — only registered when credentials are configured, so the
+    // app still runs (with just the dummy login) when they're absent.
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
   ],
   callbacks: {
+    // Authorization gate. The Credentials provider already verifies in
+    // authorize(), so it's always allowed here. For Google we require a
+    // verified email and, if an allowlist is set, restrict to those addresses —
+    // critical for a personal finance app so not just any Google user gets in.
+    async signIn({ account, profile, user }) {
+      if (account?.provider === "google") {
+        if (profile && profile.email_verified === false) return false;
+        const allow = (process.env.ALLOWED_GOOGLE_EMAILS || "")
+          .split(",")
+          .map((s) => s.trim().toLowerCase())
+          .filter(Boolean);
+        if (allow.length === 0) return true; // no allowlist configured → open
+        const email = (profile?.email || user?.email || "").toLowerCase();
+        return allow.includes(email);
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       return { ...token, ...user };
     },

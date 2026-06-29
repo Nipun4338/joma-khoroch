@@ -272,7 +272,11 @@ export default function Home() {
             </Box>
           ) : (
             <>
-              <VoiceCapture getExpenselist={getExpenselist} />
+              <VoiceCapture
+                getExpenselist={getExpenselist}
+                expenses={expenseList}
+                balance={balance}
+              />
               <ExpenseEditCard getExpenselist={getExpenselist} />
             </>
           )}

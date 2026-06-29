@@ -14,6 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.runQuery = exports.resolveTarget = exports.parseCommand = void 0;
 __exportStar(require("./types"), exports);
-__exportStar(require("./parser"), exports);
-__exportStar(require("./command"), exports);
+var parse_1 = require("./parse");
+Object.defineProperty(exports, "parseCommand", { enumerable: true, get: function () { return parse_1.parseCommand; } });
+var resolve_1 = require("./resolve");
+Object.defineProperty(exports, "resolveTarget", { enumerable: true, get: function () { return resolve_1.resolveTarget; } });
+Object.defineProperty(exports, "runQuery", { enumerable: true, get: function () { return resolve_1.runQuery; } });
