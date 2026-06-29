@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Joma Khoroch Voice",
+    "slug": "joma-khoroch-voice",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0B1020"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": true },
+    "android": {
+      "package": "com.jomakhoroch.voice"
+    },
+    "extra": {
+      "//": "Set apiBaseUrl to your dev machine's LAN IP so a physical phone can reach the API.",
+      "apiBaseUrl": "http://localhost:4000"
+    }
+  }
+}

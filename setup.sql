@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS expenses (
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status BOOLEAN DEFAULT TRUE,
     expense NUMERIC(10, 2) NOT NULL,
-    expense_type VARCHAR(10) CHECK (expense_type IN ('add', 'remove'))
+    expense_type VARCHAR(10) CHECK (expense_type IN ('add', 'remove')),
+    category VARCHAR(40)
 );
 
 -- 3. Create Balance table

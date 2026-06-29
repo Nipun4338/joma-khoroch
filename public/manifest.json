@@ -1,0 +1,18 @@
+{
+  "name": "Joma Khoroch — Voice",
+  "short_name": "Joma Khoroch",
+  "description": "Speak your spending. Voice-first personal finance for Bangladesh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1020",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
