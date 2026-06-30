@@ -4,19 +4,18 @@ import { authOptions } from "../auth/[...nextauth]";
 
 export default async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
-  if (session) {
-    // Signed in
-    try {
-      const query =
-        "SELECT expense_id, expense_title, expense_details, created_date, updated_date, status, expense, expense_type, category from expenses order by created_date desc";
-      const result = await conn.query(query);
-      res.status(200).json(result);
-    } catch (error) {
-      console.error("Database error in getexpenselist:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  } else {
-    // Not Signed in
+  const uid = session?.user?.uid;
+  if (!uid) {
     res.status(401).end();
+    return;
+  }
+  try {
+    const query =
+      "SELECT expense_id, expense_title, expense_details, created_date, updated_date, status, expense, expense_type, category from expenses where user_id = $1 order by created_date desc";
+    const result = await conn.query(query, [uid]);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Database error in getexpenselist:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
