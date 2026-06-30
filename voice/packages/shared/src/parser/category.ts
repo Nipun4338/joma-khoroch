@@ -13,7 +13,7 @@ import { normalize } from "./normalize";
 /** category → trigger words/phrases (all lowercase, matched as substrings/words). */
 const KEYWORDS: Record<Exclude<Category, "other">, string[]> = {
   food: [
-    "lunch", "dinner", "breakfast", "khabar", "khawa", "khelam", "restaurant",
+    "food", "lunch", "dinner", "breakfast", "khabar", "khawa", "khelam", "restaurant",
     "hotel", "cafe", "coffee", "cha", "tea", "snacks", "biryani", "fast food",
     "dupure khabar", "rater khabar", "nasta", "খাবার", "খাওয়া",
   ],

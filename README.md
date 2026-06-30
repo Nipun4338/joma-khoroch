@@ -55,7 +55,26 @@ PGSQL_PORT=5432
 PGSQL_DATABASE=joma_khoroch
 ```
 
-### 3. Install & Run
+### 3. Google Sign-In (optional)
+
+The dummy email/password login always works. To additionally enable **Sign in with Google**:
+
+1. In [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials), create an **OAuth 2.0 Client ID** (type: Web application).
+2. Add **Authorized redirect URIs**:
+   - `http://localhost:3000/api/auth/callback/google` (dev)
+   - `https://your-domain/api/auth/callback/google` (prod)
+3. Put the client ID/secret in `.env.local`:
+   ```env
+   GOOGLE_CLIENT_ID=your_client_id
+   GOOGLE_CLIENT_SECRET=your_client_secret
+   # Restrict who can sign in with Google (comma-separated). Strongly
+   # recommended for a finance app — leave empty to allow any Google account.
+   ALLOWED_GOOGLE_EMAILS=you@gmail.com
+   ```
+
+The Google button appears on the sign-in page only when these are configured. Set the same variables in your **Vercel project env** for production.
+
+### 4. Install & Run
 
 ```bash
 npm install

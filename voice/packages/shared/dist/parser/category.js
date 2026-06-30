@@ -13,7 +13,7 @@ const normalize_1 = require("./normalize");
 /** category → trigger words/phrases (all lowercase, matched as substrings/words). */
 const KEYWORDS = {
     food: [
-        "lunch", "dinner", "breakfast", "khabar", "khawa", "khelam", "restaurant",
+        "food", "lunch", "dinner", "breakfast", "khabar", "khawa", "khelam", "restaurant",
         "hotel", "cafe", "coffee", "cha", "tea", "snacks", "biryani", "fast food",
         "dupure khabar", "rater khabar", "nasta", "খাবার", "খাওয়া",
     ],
