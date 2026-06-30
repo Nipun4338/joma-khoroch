@@ -96,8 +96,9 @@ export function parseCommand(transcript: string): Command {
   const text = normalize(raw);
   if (!text) return { kind: "unknown", transcript: raw, confidence: 0 };
 
-  // 1. delete
-  if (DELETE_RE.test(text)) {
+  // 1. delete (regex for romanized/English; includes() for Bangla script,
+  //    since \b word boundaries don't fire around Bangla characters)
+  if (DELETE_RE.test(text) || ["মুছে", "বাদ দাও", "ডিলিট"].some((w) => text.includes(w))) {
     return { kind: "delete", target: parseTarget(text), confidence: 0.9 };
   }
 
@@ -127,14 +128,14 @@ export function parseCommand(transcript: string): Command {
   }
 
   // 5. query
-  if (BALANCE_RE.test(text)) {
+  if (BALANCE_RE.test(text) || ["ব্যালেন্স", "ব্যালান্স"].some((w) => text.includes(w))) {
     return {
       kind: "query",
       query: { metric: "balance", category: null, period: "all" },
       confidence: 0.85,
     };
   }
-  if (TOTAL_RE.test(text)) {
+  if (TOTAL_RE.test(text) || text.includes("কত খরচ") || text.includes("কত টাকা")) {
     const query: QuerySpec = {
       metric: "total_spend",
       category: categoryOf(text),

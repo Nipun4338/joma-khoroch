@@ -89,6 +89,24 @@ test("unknown: gibberish with no amount or verb", () => {
   assert.equal(parseCommand("hello there").kind, "unknown");
 });
 
+test("Bangla delete: 'মুছে ফেলো my last lunch'", () => {
+  const c = parseCommand("মুছে ফেলো my last lunch");
+  assert.equal(c.kind, "delete");
+  if (c.kind === "delete") assert.equal(c.target.ordinal, "last");
+});
+
+test("Bangla balance query: 'ব্যালেন্স koto'", () => {
+  const c = parseCommand("ব্যালেন্স koto");
+  assert.equal(c.kind, "query");
+  if (c.kind === "query") assert.equal(c.query.metric, "balance");
+});
+
+test("word-number create: 'panch sho taka lunch' routes to create", () => {
+  const c = parseCommand("panch sho taka lunch e khorch");
+  assert.equal(c.kind, "create");
+  if (c.kind === "create") assert.equal(c.draft.amount, 500);
+});
+
 // --- resolution + query over records ---
 
 const records = [
