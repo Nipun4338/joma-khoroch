@@ -6,7 +6,8 @@ import { authOptions } from "../auth/[...nextauth]";
 // (COALESCE keeps the current value for anything sent as null/undefined).
 export default async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
-  if (!session) {
+  const uid = session?.user?.uid;
+  if (!uid) {
     res.status(401).end();
     return;
   }
@@ -16,6 +17,7 @@ export default async (req, res) => {
       res.status(400).json({ error: "id is required" });
       return;
     }
+    // The user_id guard ensures a user can only edit their own rows.
     const query = `
       UPDATE expenses SET
         expense_title  = COALESCE($2, expense_title),
@@ -24,7 +26,7 @@ export default async (req, res) => {
         expense_type   = COALESCE($5, expense_type),
         category       = COALESCE($6, category),
         updated_date   = $7
-      WHERE expense_id = $1`;
+      WHERE expense_id = $1 AND user_id = $8`;
     const values = [
       id,
       title ?? null,
@@ -33,6 +35,7 @@ export default async (req, res) => {
       type ?? null,
       category ?? null,
       new Date(),
+      uid,
     ];
     const result = await conn.query(query, values);
     res.status(200).json(result);

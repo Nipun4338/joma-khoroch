@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import conn from "../../../lib/db";
 
 export const authOptions = {
   // Support both casing variations for the secret
@@ -91,11 +92,39 @@ export const authOptions = {
       return true;
     },
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      // On sign-in, resolve a stable numeric user_id (find-or-create by email).
+      // This is what unifies the dummy login and Google onto one identity and
+      // gives every account a real `users` row to scope data against.
+      if (user) {
+        const email = (user.email || token.email || "").toLowerCase();
+        if (email) {
+          try {
+            await conn.query(
+              "INSERT INTO users (email) VALUES ($1) ON CONFLICT (email) DO NOTHING",
+              [email]
+            );
+            const r = await conn.query(
+              "SELECT user_id FROM users WHERE email = $1",
+              [email]
+            );
+            token.uid = r.rows[0]?.user_id ?? token.uid;
+          } catch (e) {
+            console.error("User provisioning failed:", e);
+          }
+          token.email = email;
+        }
+        if (user.name) token.name = user.name;
+      }
+      return token;
     },
-    async session({ session, token, user }) {
-      // Send properties to the client, like an access_token from a provider.
-      session.user = token;
+    async session({ session, token }) {
+      // Expose the numeric user id (uid) that the data API routes scope by.
+      session.user = {
+        ...(session.user || {}),
+        uid: token.uid ?? null,
+        email: token.email ?? session.user?.email ?? null,
+        name: token.name ?? session.user?.name ?? null,
+      };
       return session;
     },
   },

@@ -4,17 +4,19 @@ import { authOptions } from "../auth/[...nextauth]";
 
 export default async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
-  if (session) {
-    // Signed in
-    try {
-      const query = "UPDATE insights SET daily_limit = $1";
-      const values = [req.body.dailyLimit];
-      const result = await conn.query(query, values);
-      res.send(result);
-    } catch (error) {}
-  } else {
-    // Not Signed in
-    res.status(401);
+  const uid = session?.user?.uid;
+  if (!uid) {
+    res.status(401).end();
+    return;
   }
-  res.end();
+  try {
+    const query = `
+      INSERT INTO insights (user_id, daily_limit) VALUES ($1, $2)
+      ON CONFLICT (user_id) DO UPDATE SET daily_limit = EXCLUDED.daily_limit`;
+    const result = await conn.query(query, [uid, req.body.dailyLimit]);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Database error in updateDailyLimit:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };

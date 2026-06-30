@@ -4,17 +4,20 @@ import { authOptions } from "../auth/[...nextauth]";
 
 export default async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
-  if (session) {
-    // Signed in
-    try {
-      const query = "UPDATE balance SET current_balance = $1";
-      const values = [req.body.balance];
-      const result = await conn.query(query, values);
-      res.send(result);
-    } catch (error) {}
-  } else {
-    // Not Signed in
-    res.status(401);
+  const uid = session?.user?.uid;
+  if (!uid) {
+    res.status(401).end();
+    return;
   }
-  res.end();
+  try {
+    // Upsert this user's single balance row.
+    const query = `
+      INSERT INTO balance (user_id, current_balance) VALUES ($1, $2)
+      ON CONFLICT (user_id) DO UPDATE SET current_balance = EXCLUDED.current_balance`;
+    const result = await conn.query(query, [uid, req.body.balance]);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Database error in updatebalance:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
