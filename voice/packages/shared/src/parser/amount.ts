@@ -8,6 +8,7 @@
  */
 
 import { normalize } from "./normalize";
+import { wordsToNumber } from "./words";
 
 interface AmountMatch {
   value: number;
@@ -60,7 +61,12 @@ export function extractAmount(rawText: string): AmountResult {
     });
   }
 
-  if (matches.length === 0) return { amount: null, confidence: 0 };
+  if (matches.length === 0) {
+    // No digits — try a spelled-out amount ("panch sho taka", "five hundred").
+    const w = wordsToNumber(text);
+    if (w) return { amount: w.value, confidence: w.hadScale ? 0.8 : 0.55 };
+    return { amount: null, confidence: 0 };
+  }
 
   // Prefer a number sitting next to a money word ("600 taka"); it's the most
   // reliable signal. Otherwise fall back to the first number we saw.

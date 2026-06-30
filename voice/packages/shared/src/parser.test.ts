@@ -57,3 +57,48 @@ test("empty input is safe", () => {
   assert.equal(r.amount, null);
   assert.equal(r.category, "other");
 });
+
+// --- spelled-out numbers (English + romanized Bangla) ---
+
+test("word-number: 'panch sho taka' = 500", () => {
+  assert.equal(parseTranscript("panch sho taka khoroch holo").amount, 500);
+});
+
+test("word-number: 'dosh hajar' rent = 10000", () => {
+  const r = parseTranscript("dosh hajar taka flat vara dilam");
+  assert.equal(r.amount, 10000);
+  assert.equal(r.category, "rent");
+});
+
+test("word-number: 'ek lakh' = 100000", () => {
+  assert.equal(parseTranscript("ek lakh taka").amount, 100000);
+});
+
+test("word-number: 'five hundred on lunch' = 500, food", () => {
+  const r = parseTranscript("five hundred on lunch");
+  assert.equal(r.amount, 500);
+  assert.equal(r.category, "food");
+});
+
+test("word-number: 'two thousand five hundred' = 2500", () => {
+  assert.equal(parseTranscript("two thousand five hundred taka").amount, 2500);
+});
+
+test("word-number doesn't grab unrelated trailing numbers", () => {
+  // "five hundred ... two" must be 500, not 502
+  assert.equal(parseTranscript("five hundred on lunch with two friends").amount, 500);
+});
+
+// --- Bangla script input ---
+
+test("Bangla digits + Bangla category: '৫০০ টাকা বাজার করলাম'", () => {
+  const r = parseTranscript("৫০০ টাকা বাজার করলাম");
+  assert.equal(r.amount, 500);
+  assert.equal(r.category, "groceries");
+});
+
+test("Bangla category health: 'ওষুধ কিনলাম ২০০ টাকা'", () => {
+  const r = parseTranscript("ওষুধ কিনলাম ২০০ টাকা");
+  assert.equal(r.amount, 200);
+  assert.equal(r.category, "health");
+});

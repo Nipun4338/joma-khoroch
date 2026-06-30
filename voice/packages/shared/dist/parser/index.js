@@ -22,7 +22,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractPaymentMethod = exports.extractDirection = exports.extractCounterparty = exports.extractCategory = exports.extractAmount = void 0;
+exports.wordsToNumber = exports.extractPaymentMethod = exports.extractDirection = exports.extractCounterparty = exports.extractCategory = exports.extractAmount = void 0;
 exports.parseTranscript = parseTranscript;
 const amount_1 = require("./amount");
 const category_1 = require("./category");
@@ -40,6 +40,8 @@ var direction_2 = require("./direction");
 Object.defineProperty(exports, "extractDirection", { enumerable: true, get: function () { return direction_2.extractDirection; } });
 var payment_2 = require("./payment");
 Object.defineProperty(exports, "extractPaymentMethod", { enumerable: true, get: function () { return payment_2.extractPaymentMethod; } });
+var words_1 = require("./words");
+Object.defineProperty(exports, "wordsToNumber", { enumerable: true, get: function () { return words_1.wordsToNumber; } });
 function parseTranscript(rawTranscript) {
     const text = rawTranscript ?? "";
     const amount = (0, amount_1.extractAmount)(text);

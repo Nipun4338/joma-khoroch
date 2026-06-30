@@ -13,4 +13,5 @@ export { extractCategory } from "./category";
 export { extractCounterparty } from "./counterparty";
 export { extractDirection } from "./direction";
 export { extractPaymentMethod } from "./payment";
+export { wordsToNumber } from "./words";
 export declare function parseTranscript(rawTranscript: string): ParsedTransaction;
